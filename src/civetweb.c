@@ -89,6 +89,7 @@
 #include <stddef.h>
 #include <stdio.h>
 
+
 #ifndef MAX_WORKER_THREADS
 #define MAX_WORKER_THREADS (1024*64)
 #endif
@@ -4193,6 +4194,9 @@ static void handle_static_file_request(struct mg_connection *conn, const char *p
 
 void mg_send_file2(struct mg_connection *conn, const char *path, int timeout)
 {
+
+    IGNORE_UNUSED_RESULT(timeout);
+
     struct file file = STRUCT_FILE_INITIALIZER;
     if (mg_stat(conn, path, &file)) {
         if (file.is_directory) {
@@ -5234,6 +5238,9 @@ static void send_options(struct mg_connection *conn)
                     "Date: %s\r\n"
                     "Connection: %s\r\n"
                     "Allow: GET, POST, HEAD, CONNECT, PUT, DELETE, OPTIONS, PROPFIND, MKCOL\r\n"
+                    // JLO - Add Access-Control-Allow-* headers for cross-site scripting
+                    "Access-Control-Allow-Origin: *\r\n"
+                    "Access-Control-Allow-Methods: GET, POST, HEAD, CONNECT, PUT, DELETE, OPTIONS, PROPFIND, MKCOL\r\n"
                     "DAV: 1\r\n\r\n",
                     date, suggest_connection_header(conn));
 }
@@ -5749,6 +5756,10 @@ int mg_websocket_write(struct mg_connection* conn, int opcode, const char* data,
 
 static void handle_websocket_request(struct mg_connection *conn, const char *path, int is_script_resource)
 {
+
+    IGNORE_UNUSED_RESULT(path);
+    IGNORE_UNUSED_RESULT(is_script_resource);
+
     const char *version = mg_get_header(conn, "Sec-WebSocket-Version");
 #ifdef USE_LUA
     int lua_websock = 0;
@@ -5867,6 +5878,8 @@ static uint32_t get_remote_ip(const struct mg_connection *conn)
 
 int mg_upload2(struct mg_connection *conn, const char *destination_dir, int timeout)
 {
+    IGNORE_UNUSED_RESULT(timeout);
+
     /* TODO: set a timeout */
     const char *content_type_header, *boundary_start, *sc;
     char *s;
@@ -7217,6 +7230,17 @@ struct mg_connection *mg_connect_websocket_client(const char *host, int port, in
                                                websocket_data_func data_func, websocket_close_func close_func,
                                                void * user_data)
 {
+    IGNORE_UNUSED_RESULT(host);
+    IGNORE_UNUSED_RESULT(port);
+    IGNORE_UNUSED_RESULT(use_ssl);
+    IGNORE_UNUSED_RESULT(error_buffer);
+    IGNORE_UNUSED_RESULT(error_buffer_size);
+    IGNORE_UNUSED_RESULT(path);
+    IGNORE_UNUSED_RESULT(origin);
+    IGNORE_UNUSED_RESULT(data_func);
+    IGNORE_UNUSED_RESULT(close_func);
+    IGNORE_UNUSED_RESULT(user_data);
+
     struct mg_connection* conn = NULL;
 
 #if defined(USE_WEBSOCKET)
