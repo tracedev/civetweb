@@ -3607,6 +3607,11 @@ static void send_authorization_request(struct mg_connection *conn)
 
 static int is_authorized_for_put(struct mg_connection *conn)
 {
+#if 1
+    // JLO - turn off authorization for PUT and DELETEs so they can
+    // be handled by the handler
+    return 1;
+#else
     struct file file = STRUCT_FILE_INITIALIZER;
     const char *passfile = conn->ctx->config[PUT_DELETE_PASSWORDS_FILE];
     int ret = 0;
@@ -3617,6 +3622,7 @@ static int is_authorized_for_put(struct mg_connection *conn)
     }
 
     return ret;
+#endif
 }
 
 int mg_modify_passwords_file(const char *fname, const char *domain,
@@ -5239,8 +5245,8 @@ static void send_options(struct mg_connection *conn)
                     "Connection: %s\r\n"
                     "Allow: GET, POST, HEAD, CONNECT, PUT, DELETE, OPTIONS, PROPFIND, MKCOL\r\n"
                     // JLO - Add Access-Control-Allow-* headers for cross-site scripting
-                    "Access-Control-Allow-Origin: *\r\n"
-                    "Access-Control-Allow-Methods: GET, POST, HEAD, CONNECT, PUT, DELETE, OPTIONS, PROPFIND, MKCOL\r\n"
+                    //"Access-Control-Allow-Origin: *\r\n"
+                    //"Access-Control-Allow-Methods: GET, POST, HEAD, CONNECT, PUT, DELETE, OPTIONS, PROPFIND, MKCOL\r\n"
                     "DAV: 1\r\n\r\n",
                     date, suggest_connection_header(conn));
 }
